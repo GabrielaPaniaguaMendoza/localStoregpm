@@ -37,11 +37,12 @@
         </form>
         </div>
             <div class="col-12 col-md-8">
-                <total-proyectos :numeroProyectos="numeroProyectos" :proyectos="proyectos" :CambiarEstado="CambiarEstado" :limpiarData="limpiarData"/>
+                <total-proyectos :numeroProyectos="numeroProyectos" :proyectos="proyectos" :CambiarEstado="CambiarEstado" :limpiarData="limpiarData" :borrar="EliminarRegistro" />
             </div>
     </div>
     <hr>
 </template> 
+
 
 <script>
 import { computed } from '@vue/reactivity';
@@ -50,9 +51,6 @@ import TotalProyectos from './TotalProyectos.vue';
 
     export default{
   components: { ProgressBar, TotalProyectos },
-    mounted(){
-        this.proyectos = JSON.parse(localStorage.getItem("proyectos")) || [];
-    },
         data:() => ({
             proyecto: "",
             tipo: "",
@@ -67,8 +65,8 @@ import TotalProyectos from './TotalProyectos.vue';
                     urgente: this.urgente,
                     completado: false,
                 };
-                this.proyectos.push(proyecto);    
-
+                this.proyectos.push(proyecto);  
+                
                 this.saveData();
 
                 this.proyecto = "";
@@ -84,11 +82,20 @@ import TotalProyectos from './TotalProyectos.vue';
             saveData(){
                 localStorage.setItem("proyectos", JSON.stringify(this.proyectos));
             },
-           
-            limpiarData(){
-                this.proyectos = [];
-                localStorage.clear();
+            Save(){
+                localStorage.setItem("proyecto", JSON.stringify(this.proyecto, this.tipo, this.urgente ));
             },
+        limpiarData(){
+            this.proyectos = [];
+            localStorage.clear();
+        },
+        EliminarRegistro: function(index) {
+                // Borramos de la lista
+             this.proyectos.splice(index, 1);
+             this.saveData();
+                                
+            },
+
         },
         computed: {
             numeroProyectos(){
@@ -104,8 +111,9 @@ import TotalProyectos from './TotalProyectos.vue';
                 return (completados * 100) / this.numeroProyectos || 0;
             },
         },
+        mounted(){
+            this.proyectos = JSON.parse(localStorage.getItem("proyectos")) || [];
+        },
     };
 </script>
-
-
 
